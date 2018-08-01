@@ -1,0 +1,28 @@
+{
+  "name": "bitski-node",
+  "version": "1.0.0",
+  "description": "nodejs compatible bitski sdk",
+  "main": "index.js",
+  "module": "dist/bitski-provider.es5.js",
+  "typings": "dist/types/bitski-provider.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && rollup -c rollup.config.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "joi": "13.4.0",
+    "simple-oauth2": "^2.2.0",
+    "xhr2": "^0.1.4"
+  },
+  "devDependencies": {
+    "rollup": "^0.63.5",
+    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.16.1",
+    "ts-loader": "^4.4.2",
+    "typescript": "^3.0.1"
+  }
+}
