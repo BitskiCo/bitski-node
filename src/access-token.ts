@@ -14,8 +14,11 @@ export class AccessToken {
     return false;
   }
 
-  constructor(token: string, expiresAt?: number) {
+  constructor(token: string, expiresIn?: number) {
     this.token = token;
-    this.expiresAt = expiresAt;
+    if (expiresIn && expiresIn > 0) {
+        let now = Math.floor(Date.now() / 1000);
+        this.expiresAt = now + expiresIn;
+    }
   }
 }

@@ -46,7 +46,7 @@ export class BitskiProvider extends OAuthHttpProvider {
     }
     return this.oauthClient.clientCredentials.getToken(this.settings.tokenConfig).then(accessTokenResult => {
       const token = this.oauthClient.accessToken.create(accessTokenResult).token;
-      const accessToken = new AccessToken(token.access_token, token.expires_at);
+      const accessToken = new AccessToken(token.access_token, parseInt(token.expires_in));
       this.setAccessToken(accessToken);
       return accessToken;
     });

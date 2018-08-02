@@ -34,10 +34,13 @@ function __extends(d, b) {
  * A token that provides access to Bitski on behalf of a user.
  */
 var AccessToken = /** @class */ (function () {
-    function AccessToken(token, expiresAt) {
+    function AccessToken(token, expiresIn) {
         this.expiresAt = undefined;
         this.token = token;
-        this.expiresAt = expiresAt;
+        if (expiresIn && expiresIn > 0) {
+            var now = Math.floor(Date.now() / 1000);
+            this.expiresAt = now + expiresIn;
+        }
     }
     Object.defineProperty(AccessToken.prototype, "expired", {
         get: function () {
@@ -190,7 +193,7 @@ var BitskiProvider = /** @class */ (function (_super) {
         }
         return this.oauthClient.clientCredentials.getToken(this.settings.tokenConfig).then(function (accessTokenResult) {
             var token = _this.oauthClient.accessToken.create(accessTokenResult).token;
-            var accessToken = new AccessToken(token.access_token, token.expires_at);
+            var accessToken = new AccessToken(token.access_token, parseInt(token.expires_in));
             _this.setAccessToken(accessToken);
             return accessToken;
         });

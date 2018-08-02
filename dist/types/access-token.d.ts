@@ -5,5 +5,5 @@ export declare class AccessToken {
     token: string;
     expiresAt?: number;
     readonly expired: boolean;
-    constructor(token: string, expiresAt?: number);
+    constructor(token: string, expiresIn?: number);
 }

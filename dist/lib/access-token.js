@@ -2,10 +2,13 @@
  * A token that provides access to Bitski on behalf of a user.
  */
 export class AccessToken {
-    constructor(token, expiresAt) {
+    constructor(token, expiresIn) {
         this.expiresAt = undefined;
         this.token = token;
-        this.expiresAt = expiresAt;
+        if (expiresIn && expiresIn > 0) {
+            let now = Math.floor(Date.now() / 1000);
+            this.expiresAt = now + expiresIn;
+        }
     }
     get expired() {
         if (this.expiresAt) {
