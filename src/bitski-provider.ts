@@ -18,8 +18,7 @@ export class BitskiProvider extends OAuthHttpProvider {
    * @param opts Options
    */
   constructor(networkName: string = 'mainnet', opts: object) {
-    let settings = {
-      additionalHeaders: undefined,
+    let settings: any = {
       client: {
         id: null,
         secret: null
@@ -33,6 +32,11 @@ export class BitskiProvider extends OAuthHttpProvider {
       }
     };
     Object.assign(settings, opts);
+    if (settings.client.id && settings.additionalHeaders) {
+      settings.additionalHeaders.push({name: 'X-Client-Id'})
+    } else if (settings.client.id) {
+      settings.additionalHeaders = [{name: 'X-Client-Id', value: settings.client.id }];
+    }
     const rpcURL = `${BITSKI_API_V1_HOST}/web3/${networkName}`;
     super(rpcURL, 0, settings.additionalHeaders);
     this.oauthClient = OAuth2.create({ client: settings.client, auth: settings.auth });

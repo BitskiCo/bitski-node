@@ -165,7 +165,6 @@ var BitskiProvider = /** @class */ (function (_super) {
         if (networkName === void 0) { networkName = 'mainnet'; }
         var _this = this;
         var settings = {
-            additionalHeaders: undefined,
             client: {
                 id: null,
                 secret: null
@@ -179,6 +178,12 @@ var BitskiProvider = /** @class */ (function (_super) {
             }
         };
         Object.assign(settings, opts);
+        if (settings.client.id && settings.additionalHeaders) {
+            settings.additionalHeaders.push({ name: 'X-Client-Id' });
+        }
+        else if (settings.client.id) {
+            settings.additionalHeaders = [{ name: 'X-Client-Id', value: settings.client.id }];
+        }
         var rpcURL = BITSKI_API_V1_HOST + "/web3/" + networkName;
         _this = _super.call(this, rpcURL, 0, settings.additionalHeaders) || this;
         _this.oauthClient = OAuth2.create({ client: settings.client, auth: settings.auth });
