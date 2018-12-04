@@ -1,5 +1,7 @@
 # Bitski Node Provider
 
+[![npm](https://img.shields.io/npm/v/bitski-node.svg)](https://www.npmjs.com/package/bitski-node)
+
 A Bitski powered Web3 provider for Node environments, and App Wallet.
 
 ## Installation
