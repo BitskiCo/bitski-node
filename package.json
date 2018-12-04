@@ -1,6 +1,6 @@
 {
   "name": "bitski-node",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Bitski SDK for Node environments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "simple-oauth2": "^2.2.0",
-    "bitski-provider": "0.2.0-beta.10"
+    "bitski-provider": "0.2.0-beta.12"
   },
   "devDependencies": {
     "typescript": "^3.0.1"
