@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
-    "outDir": "dist/lib",
-    "declarationDir": "dist/types",
+    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
     "noImplicitAny": false,
-    "module": "es6",
+    "module": "commonjs",
     "strict": true,
     "target": "es2017",
     "moduleResolution": "node",
-    "lib": ["es2017", "dom"],
-    "allowSyntheticDefaultImports": true
+    "lib": ["es2017"],
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*", "src/types/*"]
+    }
   },
-  "include": ["src"],
-  "typeRoots" : ["node_modules/@types"],
-  "types": ["web3-providers-http"],
+  "include": ["src"]
 }
