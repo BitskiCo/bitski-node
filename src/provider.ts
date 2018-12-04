@@ -6,8 +6,8 @@ import CredentialTokenProvider from './auth/credential-token-provider';
  * A Bitski powered web3 provider that is designed for use in Node
  */
 export default class BitskiNodeProvider extends BitskiEngine {
-  private rpcUrl: string;
-  private clientId: string;
+  public rpcUrl: string;
+  public clientId: string;
   private tokenProvider: CredentialTokenProvider;
 
   /**

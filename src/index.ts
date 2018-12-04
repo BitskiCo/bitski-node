@@ -1,5 +1,5 @@
-import BitskiNodeProvider from './provider';
 import CredentialTokenProvider from './auth/credential-token-provider';
+import BitskiNodeProvider from './provider';
 
 /**
  * Get a Bitski web3 provider for Node
@@ -11,8 +11,9 @@ import CredentialTokenProvider from './auth/credential-token-provider';
  * @param options.oauth Additional oauth settings. You shouldn't need to use this in most cases.
  */
 export function getProvider(clientId: string, options?: any): BitskiNodeProvider {
-  const tokenProvider = new CredentialTokenProvider(options.credentials || {}, {});
-  const provider = new BitskiNodeProvider(clientId, tokenProvider, options.network, options.oauth);
+  const opts = options || {};
+  const tokenProvider = new CredentialTokenProvider(opts.credentials || {}, {});
+  const provider = new BitskiNodeProvider(clientId, tokenProvider, opts.network, opts.oauth);
   provider.start();
   return provider;
 }
