@@ -1,6 +1,6 @@
-import { AuthenticatedFetchSubprovider } from 'bitski-provider';
 import { BitskiEngine } from 'bitski-provider';
 import CredentialTokenProvider from './auth/credential-token-provider';
+import { NodeFetchSubprovider } from './subproviders/fetch';
 
 /**
  * A Bitski powered web3 provider that is designed for use in Node
@@ -26,7 +26,7 @@ export default class BitskiNodeProvider extends BitskiEngine {
   }
 
   protected addSubproviders() {
-    const fetchSubprovider = new AuthenticatedFetchSubprovider(
+    const fetchSubprovider = new NodeFetchSubprovider(
       this.rpcUrl,
       false,
       this.tokenProvider,
