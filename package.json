@@ -1,6 +1,6 @@
 {
   "name": "bitski-node",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Bitski SDK for Node environments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
