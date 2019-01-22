@@ -63,3 +63,6 @@ const options = {
 const provider = Bitski.getProvider("YOUR CLIENT ID", options);
 const web3 = new Web3(provider);
 ```
+
+## Report Vulnerabilities
+Bitski provides a “bug bounty” to engage with the security researchers in the community. If you have found a vulnerability in our product or service, please [submit a vulnerability report](https://www.bitski.com/bounty) to the Bitski security team.
