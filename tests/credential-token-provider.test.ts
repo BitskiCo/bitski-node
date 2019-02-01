@@ -23,3 +23,14 @@ test('it requests access tokens with client credentials', () => {
     expect(mock).toBeCalledWith({ scope: 'eth_sign openid' });
   });
 });
+
+test('it clears access tokens when requested', () => {
+  expect.assertions(1);
+  const provider = new CredentialTokenProvider({ id: 'test-id', secret: 'test-secret' }, {});
+  // @ts-ignore
+  provider.accessToken = new AccessToken('test-access-token', 3600);
+  return provider.invalidateToken().then(() => {
+    // @ts-ignore
+    expect(provider.accessToken).toBeUndefined();
+  });
+});
