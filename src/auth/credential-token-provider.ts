@@ -32,6 +32,11 @@ export default class CredentialTokenProvider implements AccessTokenProvider {
     });
   }
 
+  public invalidateToken(): Promise<void> {
+    this.accessToken = undefined;
+    return Promise.resolve();
+  }
+
   private requestNewAccessToken(): Promise<AccessToken> {
     return this.oauthClient.clientCredentials.getToken(this.options).then((result) => {
       const token = new AccessToken(result.access_token, result.expires_in);
