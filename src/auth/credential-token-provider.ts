@@ -19,8 +19,12 @@ export default class CredentialTokenProvider implements AccessTokenProvider {
 
   constructor(credentials: any, options: any) {
     const oauthSettings = Object.assign({ client: credentials }, DEFAULT_AUTH_OPTIONS);
-    this.oauthClient = OAuth2(oauthSettings);
-    this.options = Object.assign({}, DEFAULT_TOKEN_OPTIONS, options);
+    try {
+      this.oauthClient = OAuth2(oauthSettings);
+      this.options = Object.assign({}, DEFAULT_TOKEN_OPTIONS, options);
+    } catch (e) {
+      throw new Error('Invalid credentials provided. Please check your credentials format and try again.');
+    }
   }
 
   public getAccessToken(): Promise<string> {
