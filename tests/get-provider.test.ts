@@ -14,3 +14,13 @@ test('it accepts options when creating a provider', () => {
   expect(provider.clientId).toBe('test-client-id');
   expect(provider.rpcUrl.includes('rinkeby')).toBe(true);
 });
+
+test('it does not show secrets in the console', () => {
+  try {
+    // Intentionally passing invalid extra data to trigger error
+    getProvider('test', { credentials: { secret: 'super-secret-value', network: 'mainnet' }});
+  } catch (e) {
+    // Error message should be generic to protect sensitive data from being logged.
+    expect(e.message).not.toMatch(/super-secret-value/);
+  }
+});
