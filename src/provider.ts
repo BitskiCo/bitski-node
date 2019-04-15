@@ -9,6 +9,7 @@ export default class BitskiNodeProvider extends BitskiEngine {
   public rpcUrl: string;
   public clientId: string;
   private tokenProvider: CredentialTokenProvider;
+  private headers: object;
 
   /**
    * Creates a new BitskiNodeProvider
@@ -22,6 +23,18 @@ export default class BitskiNodeProvider extends BitskiEngine {
     this.clientId = clientId;
     this.rpcUrl = `https://api.bitski.com/v1/web3/${networkName || 'mainnet'}`;
     this.tokenProvider = tokenProvider;
+
+    // Assign defaults
+    this.headers = {
+      'X-API-KEY': this.clientId,
+      'X-CLIENT-ID': this.clientId,
+    };
+
+    // Allow for adding additional headers without overriding defaults
+    if (options && options.additionalHeaders) {
+      this.headers = Object.assign({}, options.additionalHeaders, this.headers);
+    }
+
     this.addSubproviders();
   }
 
@@ -30,7 +43,7 @@ export default class BitskiNodeProvider extends BitskiEngine {
       this.rpcUrl,
       false,
       this.tokenProvider,
-      {'X-API-KEY': this.clientId, 'X-CLIENT-ID': this.clientId},
+      this.headers,
     );
     this.addProvider(fetchSubprovider);
   }
