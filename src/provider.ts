@@ -1,5 +1,6 @@
 import { BitskiEngine } from 'bitski-provider';
 import CredentialTokenProvider from './auth/credential-token-provider';
+import { ProviderOptions } from './index';
 import { NodeFetchSubprovider } from './subproviders/fetch';
 
 /**
@@ -18,7 +19,7 @@ export default class BitskiNodeProvider extends BitskiEngine {
    * @param networkName Ethereum network to use. Default: mainnet
    * @param options Additional options
    */
-  constructor(clientId: string, tokenProvider: CredentialTokenProvider, networkName?: string, options?: any) {
+  constructor(clientId: string, tokenProvider: CredentialTokenProvider, networkName?: string, options?: ProviderOptions) {
     super(options);
     this.clientId = clientId;
     this.rpcUrl = `https://api.bitski.com/v1/web3/${networkName || 'mainnet'}`;

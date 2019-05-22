@@ -39,3 +39,5 @@ export function getProvider(clientId: string, options?: ProviderOptions): Bitski
   provider.start();
   return provider;
 }
+
+export { ProviderManager } from './provider-manager';
