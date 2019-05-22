@@ -64,5 +64,33 @@ const provider = Bitski.getProvider("YOUR CLIENT ID", options);
 const web3 = new Web3(provider);
 ```
 
+## Usage with Truffle
+
+As of truffle v5, you can easily deploy contracts using your Bitski App Wallet. Configure your `truffle.js` to supply a provider like this:
+
+```javascript
+//truffle.js
+const { ProviderManager } = require('bitski-node');
+
+const manager = new ProviderManager('YOUR-CREDENTIAL-ID', 'YOUR-CREDENTIAL-SECRET');
+
+module.exports = {
+  networks: {
+    live: {
+      network_id: '1',
+      provider: () => {
+        return manager.getProvider('mainnet');
+      }
+    },
+    rinkeby: {
+      network_id: '4',
+      provider: () => {
+        return manager.getProvider('rinkeby');
+      }
+    }
+  }
+};
+```
+
 ## Report Vulnerabilities
 Bitski provides a “bug bounty” to engage with the security researchers in the community. If you have found a vulnerability in our product or service, please [submit a vulnerability report](https://www.bitski.com/bounty) to the Bitski security team.
