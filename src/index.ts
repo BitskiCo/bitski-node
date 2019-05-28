@@ -1,3 +1,4 @@
+import { BitskiEngineOptions } from 'bitski-provider';
 import CredentialTokenProvider from './auth/credential-token-provider';
 import BitskiNodeProvider from './provider';
 
@@ -12,7 +13,7 @@ export interface Credential {
 /**
  * Additional options to create a provider with
  */
-export interface ProviderOptions {
+export interface ProviderOptions extends BitskiEngineOptions {
   // Ethereum network to use (mainnet, rinkeby, kovan). default: mainnet
   networkName?: string;
   // deprecated - use networkName instead
