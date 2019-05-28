@@ -1,5 +1,5 @@
 import { AuthenticatedFetchSubprovider } from 'bitski-provider';
-import * as https from 'https';
+import { Agent } from 'https';
 
 export class NodeFetchSubprovider extends AuthenticatedFetchSubprovider {
 
@@ -7,7 +7,7 @@ export class NodeFetchSubprovider extends AuthenticatedFetchSubprovider {
     const parameters: any = super.generateParameters(payload, accessToken);
 
     // Bitski's servers require TLS 1.2 or greater
-    const agent = new https.Agent({
+    const agent = new Agent({
       secureProtocol: 'TLSv1_2_method',
     });
 
