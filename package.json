@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bitski-provider": "^0.6.0",
+    "bitski-provider": "^0.7.0-alpha.0",
     "simple-oauth2": "^2.2.0"
   },
   "devDependencies": {
