@@ -1,5 +1,7 @@
 import { AccessToken, AccessTokenProvider } from 'bitski-provider';
 import { create as OAuth2 } from 'simple-oauth2';
+import { AuthenticationError } from '../errors/authentication-error';
+import { Credential } from '../index';
 
 const DEFAULT_TOKEN_OPTIONS = { scope: 'eth_sign' };
 const DEFAULT_AUTH_OPTIONS = {
@@ -17,13 +19,13 @@ export default class CredentialTokenProvider implements AccessTokenProvider {
   protected accessToken?: AccessToken;
   protected options: any;
 
-  constructor(credentials: any, options: any) {
+  constructor(credentials: Credential, options: any) {
+    this.options = Object.assign({}, DEFAULT_TOKEN_OPTIONS, options);
     const oauthSettings = Object.assign({ client: credentials }, DEFAULT_AUTH_OPTIONS);
     try {
       this.oauthClient = OAuth2(oauthSettings);
-      this.options = Object.assign({}, DEFAULT_TOKEN_OPTIONS, options);
     } catch (e) {
-      throw new Error('Invalid credentials provided. Please check your credentials format and try again.');
+      throw AuthenticationError.InvalidCredentials(e);
     }
   }
 
@@ -46,6 +48,8 @@ export default class CredentialTokenProvider implements AccessTokenProvider {
       const token = new AccessToken(result.access_token, result.expires_in);
       this.accessToken = token;
       return token;
+    }).catch((error) => {
+      throw AuthenticationError.AuthenticationFailed(error);
     });
   }
 
