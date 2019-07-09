@@ -1,4 +1,5 @@
-import { BitskiEngineOptions } from 'bitski-provider';
+import { AccessTokenProvider, BitskiEngineOptions } from 'bitski-provider';
+import { AnonymousTokenProvider } from './auth/anonymous-token-provider';
 import CredentialTokenProvider from './auth/credential-token-provider';
 import BitskiNodeProvider from './provider';
 
@@ -33,9 +34,17 @@ export interface ProviderOptions extends BitskiEngineOptions {
  */
 export function getProvider(clientId: string, options?: ProviderOptions): BitskiNodeProvider {
   const opts = options || {};
-  const tokenProvider = new CredentialTokenProvider(opts.credentials || {}, opts.oauth);
+  let tokenProvider: AccessTokenProvider;
+  if (opts.credentials) {
+    // Create a credential token provider if using app wallet.
+    tokenProvider = new CredentialTokenProvider(opts.credentials, opts.oauth);
+  } else {
+    // Create a logged out token provider if not using app wallet.
+    tokenProvider = new AnonymousTokenProvider();
+  }
   // Check opts.network as well for backwards compatibility
   const network = opts.networkName || opts.network;
+  // Create the provider
   const provider = new BitskiNodeProvider(clientId, tokenProvider, network, opts);
   provider.start();
   return provider;
