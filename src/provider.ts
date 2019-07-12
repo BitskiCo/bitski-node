@@ -1,12 +1,13 @@
-import { AccessTokenProvider, BitskiEngine } from 'bitski-provider';
+import { AccessTokenProvider, BitskiEngine, Network } from 'bitski-provider';
 import { ProviderOptions } from './index';
+import { AppWalletSubprovider } from './subproviders/app-wallet';
 import { NodeFetchSubprovider } from './subproviders/fetch';
 
 /**
  * A Bitski powered web3 provider that is designed for use in Node
  */
 export default class BitskiNodeProvider extends BitskiEngine {
-  public rpcUrl: string;
+  public network: Network;
   public clientId: string;
   private tokenProvider: AccessTokenProvider;
   private headers: object;
@@ -18,10 +19,10 @@ export default class BitskiNodeProvider extends BitskiEngine {
    * @param networkName Ethereum network to use. Default: mainnet
    * @param options Additional options
    */
-  constructor(clientId: string, tokenProvider: AccessTokenProvider, networkName?: string, options?: ProviderOptions) {
+  constructor(clientId: string, tokenProvider: AccessTokenProvider, network: Network, options?: ProviderOptions) {
     super(options);
     this.clientId = clientId;
-    this.rpcUrl = `https://api.bitski.com/v1/web3/${networkName || 'mainnet'}`;
+    this.network = network;
     this.tokenProvider = tokenProvider;
 
     // Assign defaults
@@ -39,8 +40,13 @@ export default class BitskiNodeProvider extends BitskiEngine {
   }
 
   protected addSubproviders() {
+    // Handle app wallet related requests
+    const appWalletSubprovider = new AppWalletSubprovider(this.tokenProvider, this.network.chainId);
+    this.addProvider(appWalletSubprovider);
+
+    // Handle all other requests
     const fetchSubprovider = new NodeFetchSubprovider(
-      this.rpcUrl,
+      this.network.rpcUrl,
       false,
       this.tokenProvider,
       this.headers,

@@ -12,7 +12,7 @@ test('it accepts options when creating a provider', () => {
   const provider = getProvider('test-client-id', { networkName: 'rinkeby' });
   expect(provider).toBeDefined();
   expect(provider.clientId).toBe('test-client-id');
-  expect(provider.rpcUrl.includes('rinkeby')).toBe(true);
+  expect(provider.network.rpcUrl.includes('rinkeby')).toBe(true);
 });
 
 test('it does not show secrets in the console', () => {
@@ -26,12 +26,16 @@ test('it does not show secrets in the console', () => {
   }
 });
 
-test('it accepts network in options for backwards compatibility', () => {
+test('it accepts custom networks in options', () => {
   expect.assertions(3);
-  const provider = getProvider('test-client-id', { network: 'rinkeby' });
+  const network = {
+    rpcUrl: 'https://eth.bitski.com',
+    chainId: 0,
+  };
+  const provider = getProvider('test-client-id', { network });
   expect(provider).toBeDefined();
   expect(provider.clientId).toBe('test-client-id');
-  expect(provider.rpcUrl.includes('rinkeby')).toBe(true);
+  expect(provider.network.rpcUrl).toBe(network.rpcUrl);
 });
 
 test('it accepts additional headers in options', () => {

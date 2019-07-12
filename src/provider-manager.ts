@@ -1,5 +1,6 @@
 import CredentialTokenProvider from './auth/credential-token-provider';
 import BitskiNodeProvider from './provider';
+import { networkFromName } from './utils/networkFromName';
 
 /**
  * A wrapper around Bitski providers for convenient use with Truffle.
@@ -32,7 +33,8 @@ export class ProviderManager {
     }
 
     // ** No existing provider, create one **
-    const newProvider = new BitskiNodeProvider(this.credential, this.tokenProvider, networkName, { additionalHeaders });
+    const network = networkFromName(networkName);
+    const newProvider = new BitskiNodeProvider(this.credential, this.tokenProvider, network, { additionalHeaders });
     // Start the provider
     newProvider.start();
     // Cache
