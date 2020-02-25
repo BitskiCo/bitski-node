@@ -1,6 +1,22 @@
 import { AccessTokenProvider, BitskiEngine } from 'bitski-provider';
 import { ProviderOptions } from './index';
 import { NodeFetchSubprovider } from './subproviders/fetch';
+import TransactionOperator from './transaction-operator';
+
+function chainIdFromNetworkName(networkName?: string): number {
+  switch (networkName) {
+    case 'ropsten':
+      return 3;
+    case 'rinkeby':
+      return 4;
+    case 'goerli':
+      return 5;
+    case 'kovan':
+      return 42;
+    default:
+      return 1;
+  }
+}
 
 /**
  * A Bitski powered web3 provider that is designed for use in Node
@@ -8,6 +24,7 @@ import { NodeFetchSubprovider } from './subproviders/fetch';
 export default class BitskiNodeProvider extends BitskiEngine {
   public rpcUrl: string;
   public clientId: string;
+  public transactionOperator: TransactionOperator;
   private tokenProvider: AccessTokenProvider;
   private headers: object;
 
@@ -36,6 +53,8 @@ export default class BitskiNodeProvider extends BitskiEngine {
     }
 
     this.addSubproviders();
+
+    this.transactionOperator = new TransactionOperator(tokenProvider, chainIdFromNetworkName(networkName));
   }
 
   protected addSubproviders() {
