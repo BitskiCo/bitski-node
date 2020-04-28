@@ -57,6 +57,10 @@ export default class BitskiNodeProvider extends BitskiEngine {
     this.transactionOperator = new TransactionOperator(tokenProvider, chainIdFromNetworkName(networkName));
   }
 
+  public getAccessToken(): Promise<string> {
+    return this.tokenProvider.getAccessToken();
+  }
+
   protected addSubproviders() {
     const fetchSubprovider = new NodeFetchSubprovider(
       this.rpcUrl,
