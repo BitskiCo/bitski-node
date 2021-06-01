@@ -1,3 +1,4 @@
+import { ProviderOptions } from './index';
 import CredentialTokenProvider from './auth/credential-token-provider';
 import BitskiNodeProvider from './provider';
 
@@ -23,20 +24,21 @@ export class ProviderManager {
     this.tokenProvider = new CredentialTokenProvider({ id: credential, secret }, {});
   }
 
-  public getProvider(networkName: string = 'mainnet', additionalHeaders?: object): BitskiNodeProvider {
+  public getProvider(options?: ProviderOptions): BitskiNodeProvider {
     // Check for existing provider
-    const existingProvider = this.cachedProviders.get(networkName);
+    const cacheKey = JSON.stringify(options && options.network);
+    const existingProvider = this.cachedProviders.get(cacheKey);
     if (existingProvider) {
       // Return existing provider
       return existingProvider;
     }
 
     // ** No existing provider, create one **
-    const newProvider = new BitskiNodeProvider(this.credential, this.tokenProvider, networkName, { additionalHeaders });
+    const newProvider = new BitskiNodeProvider(this.credential, this.tokenProvider, options);
     // Start the provider
     newProvider.start();
     // Cache
-    this.cachedProviders.set(networkName, newProvider);
+    this.cachedProviders.set(cacheKey, newProvider);
     // Return newly created provider
     return newProvider;
   }
