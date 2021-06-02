@@ -48,21 +48,17 @@ const web3 = new Web3(provider);
 
 ## Using other networks
 
-Bitski is compatible with several test networks and sidechains. To use a chain other than mainnet, pass in a network in your options.
+To use a Bitski wallet with a custom chain, you can create a network configuration and pass that in:
 
 ```javascript
-const Bitski = require("bitski-node");
-const Web3 = require("web3");
-
-// Configure options
-const options = {
-  network: 'rinkeby'
-};
-
-// Pass options with the provider
-const provider = Bitski.getProvider("YOUR CLIENT ID", options);
-const web3 = new Web3(provider);
+const network = {
+  rpcUrl: 'http://localhost:9545',
+  chainId: 9,
+}
+const provider = bitski.getProvider({ network: network });
 ```
+
+This works great for development blockchains, sidechains, and more.
 
 ## Usage with Truffle
 
@@ -79,13 +75,13 @@ module.exports = {
     live: {
       network_id: '1',
       provider: () => {
-        return manager.getProvider('mainnet');
+        return manager.getProvider({network: 'mainnet'});
       }
     },
     rinkeby: {
       network_id: '4',
       provider: () => {
-        return manager.getProvider('rinkeby');
+        return manager.getProvider({network: 'rinkeby'});
       }
     }
   }

@@ -12,7 +12,7 @@ test('it accepts options when creating a provider', () => {
   const provider = getProvider('test-client-id', { networkName: 'rinkeby' });
   expect(provider).toBeDefined();
   expect(provider.clientId).toBe('test-client-id');
-  expect(provider.rpcUrl.includes('rinkeby')).toBe(true);
+  expect(provider.network.rpcUrl.includes('rinkeby')).toBe(true);
 });
 
 test('it does not show secrets in the console', () => {
@@ -31,7 +31,7 @@ test('it accepts network in options for backwards compatibility', () => {
   const provider = getProvider('test-client-id', { network: 'rinkeby' });
   expect(provider).toBeDefined();
   expect(provider.clientId).toBe('test-client-id');
-  expect(provider.rpcUrl.includes('rinkeby')).toBe(true);
+  expect(provider.network.rpcUrl.includes('rinkeby')).toBe(true);
 });
 
 test('it accepts additional headers in options', () => {
@@ -51,4 +51,20 @@ test('it accepts additional headers in options', () => {
   expect(provider.headers['X-API-KEY']).toBe('test-client-id');
   // @ts-ignore
   expect(provider.headers['X-CLIENT-ID']).toBe('test-client-id');
+});
+
+test('it accepts a sidechain as an option', () => {
+  expect.assertions(4);
+  const provider = getProvider('test-client-id', {
+    network: {
+      rpcUrl: "http://127.0.0.1:7545",
+      chainId: 5777
+    },
+  });
+  expect(provider).toBeDefined();
+  expect(provider.clientId).toBe('test-client-id');
+  // @ts-ignore
+  expect(provider.network.rpcUrl).toBe('http://127.0.0.1:7545');
+  // @ts-ignore Assert that the original headers are also available
+  expect(provider.network.chainId).toBe(5777);
 });
