@@ -17,8 +17,8 @@ export interface Credential {
 export interface ProviderOptions extends BitskiEngineOptions {
   // Ethereum network to use (mainnet, rinkeby, kovan). default: mainnet
   networkName?: string;
-  // deprecated - use networkName instead
-  network?: string | Network;
+  // Alternatively, provide a completely custom network definition
+  network?: Network;
   // Your App Wallet credentials (required to use eth_accounts, or signing)
   credentials?: Credential;
   // Additional headers to include with your http requests to bitski
@@ -32,17 +32,24 @@ export interface ProviderOptions extends BitskiEngineOptions {
  * @param clientId Your Bitski client id
  * @param options Additional options to configure your provider
  */
-export function getProvider(clientId: string, options?: ProviderOptions): BitskiNodeProvider {
+export function getProvider(clientId: string, options?: ProviderOptions | string): BitskiNodeProvider {
+  let opts: ProviderOptions = {};
+  if (typeof options === 'string') {
+    opts.networkName = options;
+  } else if (options) {
+    opts = options;
+  }
+
   let tokenProvider: AccessTokenProvider;
-  if (options && typeof options !== 'string' && options.credentials) {
+  if (opts.credentials) {
     // Create a credential token provider if using app wallet.
-    tokenProvider = new CredentialTokenProvider(options.credentials, options.oauth);
+    tokenProvider = new CredentialTokenProvider(opts.credentials, opts.oauth);
   } else {
     // Create a logged out token provider if not using app wallet.
     tokenProvider = new AnonymousTokenProvider();
   }
 
-  const provider = new BitskiNodeProvider(clientId, tokenProvider, options);
+  const provider = new BitskiNodeProvider(clientId, tokenProvider, opts);
   provider.start();
   return provider;
 }

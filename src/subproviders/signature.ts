@@ -1,9 +1,6 @@
-import { Subprovider } from '@bitski/provider-engine';
-import { AccessTokenProvider, JSONRPCRequestPayload, JSONRPCResponsePayload } from 'bitski-provider';
-import { access } from 'fs';
+import { AccessTokenProvider, AuthenticatedFetchSubprovider, JSONRPCRequestPayload, JSONRPCResponsePayload } from 'bitski-provider';
 import JsonRpcError from 'json-rpc-error';
 import { ProviderOptions } from 'src';
-import { NodeFetchSubprovider } from './fetch';
 
 export const BITSKI_RPC_BASE_URL = 'https://api.bitski.com/v1/web3';
 
@@ -26,18 +23,14 @@ type JSONRPCResponseHandler = (error?: JsonRpcError, result?: any) => void;
  * Important: this class assumes the transaction has all the necessary fields populated. The TransactionValidatorSubprovider
  * should be placed in front of this subprovider.
  */
-export class SignatureSubprovider extends Subprovider {
-  protected chainId: number;
-  protected sidechainSubprovider: Subprovider;
+export class SignatureSubprovider extends AuthenticatedFetchSubprovider {
   protected clientId: string;
   protected tokenProvider: AccessTokenProvider;
   protected providerOptions?: ProviderOptions;
   protected signatureMethods: string[];
 
-  constructor(chainId: number, sidechainSubprovider: Subprovider, clientId: string, tokenProvider: AccessTokenProvider, options?: ProviderOptions, signatureMethods?: string[]) {
-    super();
-    this.chainId = chainId;
-    this.sidechainSubprovider = sidechainSubprovider;
+  constructor(chainId: number, clientId: string, tokenProvider: AccessTokenProvider, options?: ProviderOptions, signatureMethods?: string[]) {
+    super(`${BITSKI_RPC_BASE_URL}/chains/${chainId}`, false, tokenProvider, options?.additionalHeaders);
     this.clientId = clientId;
     this.tokenProvider = tokenProvider;
     this.providerOptions = options;
@@ -65,21 +58,10 @@ export class SignatureSubprovider extends Subprovider {
    */
   public async handleSignatureRequest(payload: JSONRPCRequestPayload, next: () => void, callback: JSONRPCResponseHandler) {
     try {
-      const signPayload = {
-        id: payload.id,
-        jsonrpc: payload.jsonrpc,
-        method: payload.method === 'eth_sendTransaction' ? 'eth_signTransaction' : payload.method,
-        params: payload.params,
-      };
-      const signatureResult = await this.signTransaction(signPayload);
+      const signatureResult = await this.signTransaction(payload);
       if (payload.method === 'eth_sendTransaction') {
-        const sendPayload = {
-          id: payload.id,
-          jsonrpc: payload.jsonrpc,
-          method: 'eth_sendRawTransaction',
-          params: [signatureResult],
-        };
-        this.sidechainSubprovider.handleRequest(sendPayload, next, callback);
+        const result = await this.submitTransaction(signatureResult);
+        callback(undefined, result);
       } else {
         callback(undefined, signatureResult);
       }
@@ -90,23 +72,34 @@ export class SignatureSubprovider extends Subprovider {
   }
 
   protected async signTransaction(payload: JSONRPCRequestPayload): Promise<JSONRPCResponsePayload> {
-    const url = `${BITSKI_RPC_BASE_URL}/chains/${this.chainId}`;
-    const headers = {
-      'X-API-KEY': this.clientId,
-      'X-CLIENT-ID': this.clientId,
+    const signPayload = {
+      id: payload.id,
+      jsonrpc: payload.jsonrpc,
+      method: payload.method === 'eth_sendTransaction' ? 'eth_signTransaction' : payload.method,
+      params: payload.params,
     };
-    const fetchSubprovider = new NodeFetchSubprovider(url, true, this.tokenProvider, headers);
-    return new Promise((accept, reject) => {
-      fetchSubprovider.handleRequest(payload, () => {}, (error, result) => {
-        console.log('fetchSubprovider result', error, result);
+
+    return new Promise((resolve, reject) => {
+      super.handleRequest(signPayload, () => {reject('SDK misconfigured')}, (error, result) => {
         if (error) {
-          reject(error);
-        } else {
-          accept(result);
-        }
-      })
+          reject(error)
+        } else (
+          resolve(result)
+        )
+      });
     })
   }
+
+  protected submitTransaction(rawTransaction): Promise<any> {
+    if (!this.engine) {
+      // The only reason this would ever happen currently is if you tried to send requests
+      // before this subprovider was added to an engine.
+      return Promise.reject(new Error('Configuration error. Could not find engine in SignatureSubprovider.'));
+    }
+    console.log('Using engine to send', 'eth_sendRawTransaction', [rawTransaction]);
+    return this.engine.send('eth_sendRawTransaction', [rawTransaction]);
+  }
+
 
   /** Should this subprovider handle the request?
    * @param method The RPC method of the request

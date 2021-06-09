@@ -19,7 +19,7 @@ test('it does not show secrets in the console', () => {
   try {
     // Intentionally passing invalid extra data to trigger error
     // @ts-ignore
-    getProvider('test', { credentials: { secret: 'super-secret-value', network: 'mainnet' }});
+    getProvider('test', { credentials: { secret: 'super-secret-value', networkName: 'mainnet' }});
   } catch (e) {
     // Error message should be generic to protect sensitive data from being logged.
     expect(e.message).not.toMatch(/super-secret-value/);
@@ -28,7 +28,7 @@ test('it does not show secrets in the console', () => {
 
 test('it accepts network in options for backwards compatibility', () => {
   expect.assertions(3);
-  const provider = getProvider('test-client-id', { network: 'rinkeby' });
+  const provider = getProvider('test-client-id', { networkName: 'rinkeby' });
   expect(provider).toBeDefined();
   expect(provider.clientId).toBe('test-client-id');
   expect(provider.network.rpcUrl.includes('rinkeby')).toBe(true);
