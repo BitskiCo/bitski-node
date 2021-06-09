@@ -3,22 +3,9 @@ import { ProviderOptions } from './index';
 import TransactionOperator from './transaction-operator';
 import { FetchSubprovider } from '@bitski/provider-engine';
 import { SignatureSubprovider } from './subproviders/signature';
+import { networkFromName } from './utils/networkFromName';
 
 export const BITSKI_RPC_BASE_URL = 'https://api.bitski.com/v1/web3';
-
-function networkFromName(networkName: string): Network {
-  switch (networkName) {
-  case '':
-  case 'mainnet':
-    return Mainnet;
-  case 'rinkeby':
-    return Rinkeby;
-  case 'kovan':
-    return Kovan;
-  default:
-    throw new Error(`Unsupported network name ${networkName}. Try passing a \`network\` in the options instead.`);
-  }
-}
 
 function networkFromProviderOptions(options: ProviderOptions | string | undefined): Network {
   if (!options) {
@@ -104,20 +91,16 @@ export default class BitskiNodeProvider extends BitskiEngine {
       this.headers,
     );
     this.addProvider(accountsProvider);
-    
-    const fetchSubprovider = new FetchSubprovider({rpcUrl:
-      this.network.rpcUrl,
-    });
 
     // Respond to requests for sidechans that need to be signed
     const signatureSubprovider = new SignatureSubprovider(
       this.network.chainId,
-      fetchSubprovider,
       this.clientId,
       this.tokenProvider,
     );
     this.addProvider(signatureSubprovider);
       
+    const fetchSubprovider = new FetchSubprovider(this.network);
     this.addProvider(fetchSubprovider);
   }
 

@@ -26,7 +26,7 @@ export class ProviderManager {
 
   public getProvider(options?: ProviderOptions): BitskiNodeProvider {
     // Check for existing provider
-    const cacheKey = JSON.stringify(options && options.network);
+    const cacheKey = JSON.stringify(options && (options.network || options.networkName));
     const existingProvider = this.cachedProviders.get(cacheKey);
     if (existingProvider) {
       // Return existing provider

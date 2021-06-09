@@ -75,13 +75,13 @@ module.exports = {
     live: {
       network_id: '1',
       provider: () => {
-        return manager.getProvider({network: 'mainnet'});
+        return manager.getProvider('mainnet');
       }
     },
     rinkeby: {
       network_id: '4',
       provider: () => {
-        return manager.getProvider({network: 'rinkeby'});
+        return manager.getProvider('rinkeby');
       }
     }
   }
