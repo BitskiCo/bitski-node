@@ -1,8 +1,8 @@
 import { AuthenticatedFetchSubprovider, AccessTokenProvider, BitskiEngine, BitskiEngineOptions, Kovan, Mainnet, Network, Rinkeby  } from 'bitski-provider';
-import { type } from 'os';
 import { ProviderOptions } from './index';
-import { NodeFetchSubprovider } from './subproviders/fetch';
 import TransactionOperator from './transaction-operator';
+import { FetchSubprovider } from '@bitski/provider-engine';
+import { SignatureSubprovider } from './subproviders/signature';
 
 export const BITSKI_RPC_BASE_URL = 'https://api.bitski.com/v1/web3';
 
@@ -105,12 +105,19 @@ export default class BitskiNodeProvider extends BitskiEngine {
     );
     this.addProvider(accountsProvider);
     
-    const fetchSubprovider = new NodeFetchSubprovider(
+    const fetchSubprovider = new FetchSubprovider({rpcUrl:
       this.network.rpcUrl,
-      false,
+    });
+
+    // Respond to requests for sidechans that need to be signed
+    const signatureSubprovider = new SignatureSubprovider(
+      this.network.chainId,
+      fetchSubprovider,
+      this.clientId,
       this.tokenProvider,
-      this.headers,
     );
+    this.addProvider(signatureSubprovider);
+      
     this.addProvider(fetchSubprovider);
   }
 
