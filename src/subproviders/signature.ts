@@ -96,7 +96,6 @@ export class SignatureSubprovider extends AuthenticatedFetchSubprovider {
       // before this subprovider was added to an engine.
       return Promise.reject(new Error('Configuration error. Could not find engine in SignatureSubprovider.'));
     }
-    console.log('Using engine to send', 'eth_sendRawTransaction', [rawTransaction]);
     return this.engine.send('eth_sendRawTransaction', [rawTransaction]);
   }
 
