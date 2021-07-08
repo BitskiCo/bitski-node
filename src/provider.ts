@@ -4,6 +4,7 @@ import TransactionOperator from './transaction-operator';
 import { FetchSubprovider } from '@bitski/provider-engine';
 import { SignatureSubprovider } from './subproviders/signature';
 import { networkFromName } from './utils/networkFromName';
+import { NodeFetchSubprovider } from './subproviders/fetch';
 
 export const BITSKI_RPC_BASE_URL = 'https://api.bitski.com/v1/web3';
 
@@ -82,6 +83,10 @@ export default class BitskiNodeProvider extends BitskiEngine {
     return this.tokenProvider.getAccessToken();
   }
 
+  protected isBitskiNode(): boolean {
+    return this.network.rpcUrl.includes(BITSKI_RPC_BASE_URL)
+  }
+
   protected addSubproviders() {
     // Used for eth_accounts calls
     const accountsProvider = new RemoteAccountSubprovider(
@@ -100,7 +105,7 @@ export default class BitskiNodeProvider extends BitskiEngine {
     );
     this.addProvider(signatureSubprovider);
       
-    const fetchSubprovider = new FetchSubprovider(this.network);
+    const fetchSubprovider = this.isBitskiNode() ? new NodeFetchSubprovider(this.network.rpcUrl, false, this.tokenProvider, this.headers) : new FetchSubprovider(this.network);
     this.addProvider(fetchSubprovider);
   }
 
